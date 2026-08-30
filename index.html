@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Phyo Ko Ko | DTI224 Study Lab</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --ink: #202032;
+      --muted: #6e6d82;
+      --paper: #fffdf9;
+      --line: #e8e6ef;
+      --purple: #6d4aff;
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 8% 0, #e6dcff 0, transparent 28rem), #f8f7fb;
+      color: var(--ink);
+      font-family: Manrope, Arial, sans-serif;
+    }
+
+    .shell {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 52px 0;
+    }
+
+    .eyebrow, .label {
+      font: bold 12px "DM Mono", monospace;
+      letter-spacing: .1em;
+      color: var(--purple);
+    }
+
+    .hero { margin-bottom: 28px; }
+
+    .hero h1, .page-header h1 {
+      font-size: clamp(42px, 8vw, 76px);
+      line-height: .96;
+      letter-spacing: -.07em;
+      margin: 12px 0;
+    }
+
+    .hero h1 span { color: var(--purple); }
+
+    .hero p, .page-header p {
+      max-width: 570px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .tool-card {
+      min-height: 180px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 35px #27204417;
+    }
+
+    .tool-card b {
+      font: 12px "DM Mono", monospace;
+      color: var(--muted);
+    }
+
+    .tool-card h2 {
+      font-size: 20px;
+      letter-spacing: -.04em;
+      margin: 28px 0 6px;
+    }
+
+    .tool-card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .tool-card i {
+      position: absolute;
+      right: 20px;
+      bottom: 16px;
+      color: var(--purple);
+      font-style: normal;
+      font-size: 23px;
+    }
+
+    .tool-card:nth-child(1) { background: #f0ebff; }
+    .tool-card:nth-child(2) { background: #e6f8ef; }
+    .tool-card:nth-child(3) { background: #fff1d9; }
+    .tool-card:nth-child(4) { background: #dff4f4; }
+    .tool-card:nth-child(5) { background: #ffe6ea; }
+    .tool-card:nth-child(6) { background: #e9edff; }
+    .tool-card:nth-child(7) { background: #f5edff; }
+
+    footer {
+      margin: 34px 2px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .back {
+      display: inline-flex;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 44px;
+      cursor: pointer;
+    }
+
+    .back:hover { color: var(--purple); }
+
+    .page-header h1 { font-size: clamp(36px, 7vw, 58px); }
+
+    .panel, .profile-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 14px 35px #2720440b;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      margin: 18px 0;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, select, button {
+      font: inherit;
+      border-radius: 12px;
+      padding: 13px 14px;
+      border: 1px solid #dcd9e6;
+    }
+
+    input, select {
+      display: block;
+      margin-top: 8px;
+      background: white;
+      color: var(--ink);
+      width: 100%;
+    }
+
+    button {
+      background: var(--purple);
+      color: white;
+      border: 0;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .result {
+      margin: 22px 0 0;
+      padding: 17px;
+      border-radius: 14px;
+      background: #f1effa;
+      font-weight: 700;
+      min-height: 58px;
+      line-height: 1.55;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .profile-card.full { grid-column: 1 / -1; }
+
+    .profile-card h2 {
+      font-size: 17px;
+      margin: 0 0 12px;
+    }
+
+    .profile-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: #eeeaff;
+      color: #4930b4;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hobby-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hobby {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 19px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .emoji {
+      font: 12px "DM Mono", monospace;
+      background: #eeeaff;
+      color: #4930b4;
+      padding: 8px;
+      border-radius: 10px;
+      height: fit-content;
+    }
+
+    .hobby h2 {
+      font-size: 17px;
+      margin: 0 0 4px;
+    }
+
+    .hobby p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .zones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .drop-zone {
+      border: 2px dashed #c9c4d6;
+      border-radius: 18px;
+      min-height: 180px;
+      padding: 16px;
+      background: #faf9fd;
+    }
+
+    .drop-zone h2 {
+      font-size: 15px;
+      margin: 0 0 12px;
+    }
+
+    .draggable {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 13px;
+      margin: 8px 0;
+      cursor: grab;
+      font-weight: 700;
+    }
+
+    @media (max-width: 650px) {
+      .shell { padding: 34px 0; }
+      .tool-grid { grid-template-columns: 1fr 1fr; }
+      .profile-grid, .zones { grid-template-columns: 1fr; }
+      .profile-card.full { grid-column: auto; }
+    }
+
+    @media (max-width: 420px) {
+      .tool-grid { grid-template-columns: 1fr; }
+      .tool-card { min-height: 145px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+
+    <section class="view active" id="home">
+      <header class="hero">
+        <p class="eyebrow">PHYO KO KO · DTI224</p>
+        <h1>My Study Lab<span>.</span></h1>
+        <p>A small collection of web exercises, built with curiosity.</p>
+      </header>
+
+      <section class="tool-grid">
+        <div class="tool-card" onclick="show('profile')">
+          <b>01</b><h2>My profile</h2><p>About me, my education, and skills.</p><i>→</i>
+        </div>
+        <div class="tool-card" onclick="show('hobbies')">
+          <b>02</b><h2>Things I enjoy</h2><p>A quick look at my interests.</p><i>→</i>
+        </div>
+        <div class="tool-card" onclick="show('converter')">
+          <b>03</b><h2>Unit converter</h2><p>Convert distance and temperature.</p><i>→</i>
+        </div>
+        <div class="tool-card" onclick="show('grade')">
+          <b>04</b><h2>Grade checker</h2><p>Turn a score into a letter grade.</p><i>→</i>
+        </div>
+        <div class="tool-card" onclick="show('change')">
+          <b>05</b><h2>Change maker</h2><p>Find a note-and-coin breakdown.</p><i>→</i>
+        </div>
+        <div class="tool-card" onclick="show('distance')">
+          <b>06</b><h2>Campus distance</h2><p>Estimate your distance from campus.</p><i>→</i>
+        </div>
+        <div class="tool-card" onclick="show('sort')">
+          <b>07</b><h2>Sort challenge</h2><p>Drag items into matching groups.</p><i>→</i>
+        </div>
+      </section>
+
+      <footer>Designed and coded by <strong>Phyo Ko Ko</strong></footer>
+    </section>
+
+    <section class="view" id="profile">
+      <a class="back" onclick="show('home')">← Back to lab</a>
+
+      <header class="page-header">
+        <p class="label">01 · STUDENT PROFILE</p>
+        <h1>Phyo Ko Ko</h1>
+        <p>Student ID: 240702404718 · Digital Technology Innovation student</p>
+      </header>
+
+      <section class="profile-grid">
+        <article class="profile-card full">
+          <h2>About me</h2>
+          <p>I am a Digital Technology Innovation student at Kasem Bundit University. I enjoy learning how technology can solve real problems, and I am building my skills in web development, programming, and digital design through practical projects.</p>
+        </article>
+
+        <article class="profile-card">
+          <h2>Education</h2>
+          <p><strong>Kasem Bundit University</strong><br>
+          Bachelor of Digital Technology Innovation<br>
+          Course: DTI224 Mobile Application Development<br>
+          Expected graduation: 2028</p>
+        </article>
+
+        <article class="profile-card">
+          <h2>Languages</h2>
+          <div class="chips">
+            <span class="chip">Thai</span>
+            <span class="chip">English</span>
+          </div>
+        </article>
+
+        <article class="profile-card full">
+          <h2>Skills I am developing</h2>
+          <div class="chips">
+            <span class="chip">HTML & CSS</span>
+            <span class="chip">JavaScript</span>
+            <span class="chip">Python</span>
+            <span class="chip">Microsoft Office</span>
+            <span class="chip">Teamwork</span>
+            <span class="chip">Problem solving</span>
+          </div>
+        </article>
+      </section>
+    </section>
+
+    <section class="view" id="hobbies">
+      <a class="back" onclick="show('home')">← Back to lab</a>
+
+      <header class="page-header">
+        <p class="label">02 · OUTSIDE THE CLASSROOM</p>
+        <h1>Things I enjoy</h1>
+      </header>
+
+      <section class="hobby-list">
+        <article class="hobby">
+          <div class="emoji">GAME</div>
+          <div><h2>Video gaming</h2><p>Gaming helps me relax while practising strategy, teamwork, and quick decision-making.</p></div>
+        </article>
+        <article class="hobby">
+          <div class="emoji">CODE</div>
+          <div><h2>Competitive programming</h2><p>I enjoy solving challenging problems and improving my coding skills under time pressure.</p></div>
+        </article>
+        <article class="hobby">
+          <div class="emoji">OPEN</div>
+          <div><h2>Open-source contribution</h2><p>I am interested in contributing to shared projects and learning from the developer community.</p></div>
+        </article>
+        <article class="hobby">
+          <div class="emoji">RACE</div>
+          <div><h2>Motorcycle racing</h2><p>I enjoy the speed, precision, and excitement of motorcycle racing.</p></div>
+        </article>
+      </section>
+    </section>
+
+    <section class="view" id="converter">
+      <a class="back" onclick="show('home')">← Back to lab</a>
+
+      <header class="page-header">
+        <p class="label">03 · USEFUL TOOL</p>
+        <h1>Unit converter</h1>
+        <p>Choose a conversion, enter a number, and get the answer instantly.</p>
+      </header>
+
+      <section class="panel">
+        <div class="field">
+          <label>Value
+            <input id="convertValue" type="number" step="any" placeholder="e.g. 12.5">
+          </label>
+        </div>
+
+        <div class="field">
+          <label>Convert
+            <select id="convertType">
+              <option value="cm-m">Centimetres → metres</option>
+              <option value="m-cm">Metres → centimetres</option>
+              <option value="km-m">Kilometres → metres</option>
+              <option value="m-km">Metres → kilometres</option>
+              <option value="c-f">Celsius → Fahrenheit</option>
+              <option value="f-c">Fahrenheit → Celsius</option>
+            </select>
+          </label>
+        </div>
+
+        <button onclick="convertUnit()">Convert value</button>
+        <div class="result" id="convertResult">Your result will appear here.</div>
+      </section>
+    </section>
+
+    <section class="view" id="grade">
+      <a class="back" onclick="show('home')">← Back to lab</a>
+
+      <header class="page-header">
+        <p class="label">04 · SCORE TOOL</p>
+        <h1>Grade checker</h1>
+        <p>Enter a score from 0 to 100 to see its letter grade.</p>
+      </header>
+
+      <section class="panel">
+        <div class="field">
+          <label>Your score
+            <input id="score" type="number" min="0" max="100" placeholder="0–100">
+          </label>
+        </div>
+
+        <button onclick="grade()">Check my grade</button>
+        <div class="result" id="gradeResult">Ready when you are.</div>
+      </section>
+    </section>
+
+    <section class="view" id="change">
+      <a class="back" onclick="show('home')">← Back to lab</a>
+
+      <header class="page-header">
+        <p class="label">05 · MONEY TOOL</p>
+        <h1>Change maker</h1>
+        <p>See a simple breakdown for a whole-number amount in Thai baht.</p>
+      </header>
+
+      <section class="panel">
+        <div class="field">
+          <label>Amount (THB)
+            <input id="amount" type="number" min="0" step="1" placeholder="e.g. 786">
+          </label>
+        </div>
+
+        <button onclick="makeChange()">Break it down</button>
+        <div class="result" id="changeResult">Enter an amount to begin.</div>
+      </section>
+    </section>
+
+    <section class="view" id="distance">
+      <a class="back" onclick="show('home')">← Back to lab</a>
+
+      <header class="page-header">
+        <p class="label">06 · LOCATION TOOL</p>
+        <h1>Campus distance</h1>
+        <p>Use your device location to estimate the straight-line distance to Kasem Bundit University.</p>
+      </header>
+
+      <section class="panel">
+        <button onclick="findDistance()">Use my location</button>
+        <div class="result" id="distanceResult">Location access is used only by your browser for this calculation.</div>
+      </section>
+    </section>
+
+    <section class="view" id="sort">
+      <a class="back" onclick="show('home')">← Back to lab</a>
+
+      <header class="page-header">
+        <p class="label">07 · MINI CHALLENGE</p>
+        <h1>Sort the tools</h1>
+        <p>Drag each item to the category where it belongs.</p>
+      </header>
+
+      <section class="panel">
+        <div>
+          <div class="draggable" draggable="true">Python</div>
+          <div class="draggable" draggable="true">Figma</div>
+          <div class="draggable" draggable="true">JavaScript</div>
+          <div class="draggable" draggable="true">Canva</div>
+        </div>
+
+        <div class="zones">
+          <div class="drop-zone" data-kind="code"><h2>Coding tools</h2></div>
+          <div class="drop-zone" data-kind="design"><h2>Design tools</h2></div>
+        </div>
+
+        <div class="result" id="sortResult">Move all four cards into their matching category.</div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    function show(id) {
+      document.querySelectorAll(".view").forEach(view => {
+        view.classList.remove("active");
+      });
+
+      document.getElementById(id).classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    function convertUnit() {
+      const value = Number(document.querySelector("#convertValue").value);
+      const type = document.querySelector("#convertType").value;
+      const result = document.querySelector("#convertResult");
+
+      if (!Number.isFinite(value)) {
+        result.textContent = "Please enter a valid number.";
+        return;
+      }
+
+      const conversions = {
+        "cm-m": [value / 100, "m"],
+        "m-cm": [value * 100, "cm"],
+        "km-m": [value * 1000, "m"],
+        "m-km": [value / 1000, "km"],
+        "c-f": [(value * 9 / 5) + 32, "°F"],
+        "f-c": [(value - 32) * 5 / 9, "°C"]
+      };
+
+      const answer = conversions[type];
+      result.textContent =
+        `${value} = ${answer[0].toFixed(2).replace(/\.00$/, "")} ${answer[1]}`;
+    }
+
+    function grade() {
+      const score = Number(document.querySelector("#score").value);
+      const result = document.querySelector("#gradeResult");
+
+      if (!Number.isFinite(score) || score < 0 || score > 100) {
+        result.textContent = "Please enter a score between 0 and 100.";
+        return;
+      }
+
+      let letter;
+
+      if (score >= 80) letter = "A";
+      else if (score >= 70) letter = "B";
+      else if (score >= 60) letter = "C";
+      else if (score >= 50) letter = "D";
+      else letter = "F";
+
+      result.textContent = `Score ${score}: your grade is ${letter}.`;
+    }
+
+    function makeChange() {
+      let amount = Number(document.querySelector("#amount").value);
+      const result = document.querySelector("#changeResult");
+
+      if (!Number.isInteger(amount) || amount < 0) {
+        result.textContent = "Please enter a whole positive amount.";
+        return;
+      }
+
+      const money = [1000, 500, 100, 50, 20, 10, 5, 2, 1];
+      const output = [];
+
+      for (const note of money) {
+        const quantity = Math.floor(amount / note);
+
+        if (quantity) {
+          output.push(`${quantity} × THB ${note}`);
+        }
+
+        amount %= note;
+      }
+
+      result.innerHTML = output.length ? output.join("<br>") : "No change needed.";
+    }
+
+    const campus = {
+      lat: 13.7384,
+      lon: 100.6279
+    };
+
+    function findDistance() {
+      const result = document.querySelector("#distanceResult");
+
+      if (!navigator.geolocation) {
+        result.textContent = "Your browser does not support location services.";
+        return;
+      }
+
+      result.textContent = "Finding your location…";
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const userLat = position.coords.latitude;
+          const userLon = position.coords.longitude;
+
+          const earthRadius = 6371;
+          const toRadians = value => value * Math.PI / 180;
+
+          const latitudeDifference = toRadians(userLat - campus.lat);
+          const longitudeDifference = toRadians(userLon - campus.lon);
+
+          const calculation =
+            Math.sin(latitudeDifference / 2) ** 2 +
+            Math.cos(toRadians(campus.lat)) *
+            Math.cos(toRadians(userLat)) *
+            Math.sin(longitudeDifference / 2) ** 2;
+
+          const distance =
+            2 * earthRadius *
+            Math.atan2(Math.sqrt(calculation), Math.sqrt(1 - calculation));
+
+          result.textContent =
+            `You are about ${distance.toFixed(2)} km from campus (straight-line distance).`;
+        },
+        error => {
+          result.textContent = `Location unavailable: ${error.message}`;
+        }
+      );
+    }
+
+    let draggedItem;
+
+    const correctCategory = {
+      Python: "code",
+      JavaScript: "code",
+      Figma: "design",
+      Canva: "design"
+    };
+
+    document.querySelectorAll(".draggable").forEach(item => {
+      item.addEventListener("dragstart", () => {
+        draggedItem = item;
+      });
+    });
+
+    document.querySelectorAll(".drop-zone").forEach(zone => {
+      zone.addEventListener("dragover", event => {
+        event.preventDefault();
+      });
+
+      zone.addEventListener("drop", event => {
+        event.preventDefault();
+
+        if (!draggedItem) return;
+
+        zone.append(draggedItem);
+
+        const completed = [...document.querySelectorAll(".draggable")].every(item => {
+          return item.parentElement.dataset.kind === correctCategory[item.textContent];
+        });
+
+        document.querySelector("#sortResult").textContent =
+          completed
+            ? "Excellent — every tool is in the right place!"
+            : "Keep going — check that each tool matches its category.";
+
+        draggedItem = null;
+      });
+    });
+  </script>
+</body>
+</html>
